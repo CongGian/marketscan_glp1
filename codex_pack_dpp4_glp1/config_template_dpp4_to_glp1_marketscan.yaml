@@ -1,0 +1,161 @@
+# Configuration template for DPP-4 -> GLP-1 switcher person-month build.
+# This file contains no row-level data.
+# Fill in local paths and variable names inside the approved HPC environment.
+
+project:
+  name: dpp4_to_glp1_switcher
+  version: "0.1.0"
+  analyst: "<human_analyst>"
+  environment: "IU Quartz/RED"
+  notes: "MarketScan metadata-only configuration template. Do not include row-level data."
+
+paths:
+  raw_root: "/N/slate/<project>/marketscan/raw"
+  derived_root: "/N/slate/<project>/marketscan/derived"
+  output_root: "/N/slate/<project>/marketscan/outputs/dpp4_to_glp1"
+  log_root: "/N/slate/<project>/marketscan/logs/dpp4_to_glp1"
+  code_list_root: "/N/slate/<project>/code_lists"
+
+years:
+  data_years: [2017, 2018, 2019, 2020, 2021, 2022, 2023]
+  primary_index_start: "2018-01-01"
+  primary_index_end: "2022-12-31"
+  baseline_months: 12
+  followup_months: 12
+  event_month_min: -12
+  event_month_max: 12
+
+hpc:
+  n_shards: 200
+  shard_key: "enrollee_id"
+  file_format: "parquet"
+  compression: "zstd"
+  slurm_partition: "<partition>"
+  slurm_account: "<account>"
+  cpus_per_task: 8
+  mem: "32G"
+  time: "04:00:00"
+
+metadata:
+  enrollment_table: "<enrollment_table_name>"
+  rx_table: "<pharmacy_table_name>"
+  inpatient_table: "<inpatient_table_name>"
+  outpatient_table: "<outpatient_table_name>"
+  facility_table: "<facility_table_name_if_applicable>"
+
+variables:
+  common:
+    enrollee_id: "<enrolid>"
+    service_date: "<date>"
+    year: "<year>"
+
+  enrollment:
+    enrollee_id: "<enrolid>"
+    enroll_start: "<enroll_start_date>"
+    enroll_end: "<enroll_end_date>"
+    rx_benefit_flag: "<rx_benefit_flag>"
+    medical_benefit_flag: "<medical_benefit_flag>"
+    age: "<age>"
+    sex: "<sex>"
+    region: "<region>"
+    plan_type: "<plan_type>"
+
+  rx:
+    enrollee_id: "<enrolid>"
+    fill_date: "<fill_date>"
+    ndc: "<ndc>"
+    days_supply: "<days_supply>"
+    quantity: "<quantity>"
+    allowed_amount: "<allowed>"
+    plan_paid: "<plan_paid>"
+    copay: "<copay>"
+    coinsurance: "<coinsurance>"
+    deductible: "<deductible>"
+    patient_pay: "<patient_pay_if_available>"
+
+  medical:
+    enrollee_id: "<enrolid>"
+    service_start: "<service_start_date>"
+    service_end: "<service_end_date>"
+    claim_type: "<claim_type>"
+    place_of_service: "<place_of_service>"
+    revenue_code: "<revenue_code>"
+    dx1: "<dx1>"
+    dx2: "<dx2>"
+    dx_fields: ["<dx1>", "<dx2>", "<dx3>", "<dx4>"]
+    proc_fields: ["<proc1>", "<proc2>"]
+    allowed_amount: "<allowed>"
+    plan_paid: "<plan_paid>"
+    copay: "<copay>"
+    coinsurance: "<coinsurance>"
+    deductible: "<deductible>"
+    patient_pay: "<patient_pay_if_available>"
+
+code_lists:
+  glp1_ndc: "glp1_ndc.csv"
+  dpp4_ndc: "dpp4_ndc.csv"
+  metformin_ndc: "metformin_ndc.csv"
+  insulin_ndc: "insulin_ndc.csv"
+  sglt2_ndc: "sglt2_ndc.csv"
+  sulfonylurea_ndc: "sulfonylurea_ndc.csv"
+  tzd_ndc: "tzd_ndc.csv"
+  diagnosis_groups_dir: "diagnosis_groups/"
+
+exposure_definition:
+  glp1_washout_days: 365
+  dpp4_preindex_lookback_days: 180
+  dpp4_preindex_grace_days: 60
+  replacement_assessment_days: 120
+  dpp4_postindex_grace_days: 30
+  allow_transition_overlap_days: 30
+  primary_switch_category: "clean_replacement"
+  include_tirzepatide_in_glp1_like_class: true
+
+coverage_construction:
+  stockpiling: true
+  max_carryover_days: 90
+  grace_days_for_active_supply: 0
+  monthly_coverage_measure: "share_of_days_covered"
+
+sample_restrictions:
+  min_age: 18
+  max_age: 64
+  require_continuous_medical_enrollment: true
+  require_continuous_rx_enrollment: true
+  require_complete_12m_baseline: true
+  require_complete_12m_followup: true
+  exclude_prior_glp1_baseline: true
+  require_dpp4_preindex_use: true
+
+comorbidity:
+  lookback_months: 12
+  outpatient_rule_min_claims: 2
+  outpatient_rule_min_days_apart: 30
+  inpatient_rule_min_claims: 1
+  build_elixhauser: true
+  build_charlson: true
+  disease_bundles:
+    - diabetes
+    - obesity
+    - chronic_kidney_disease
+    - cardiovascular_or_ascvd
+    - heart_failure
+    - hypertension
+    - dyslipidemia
+    - sleep_apnea
+    - liver_disease
+    - depression_anxiety
+    - substance_use
+
+financial_burden:
+  construct_patient_oop: true
+  oop_components: ["copay", "coinsurance", "deductible"]
+  fallback_patient_pay_field: "patient_pay"
+  oop_shock_multiplier_vs_baseline_median: 2.0
+  high_oop_percentile: 90
+
+outputs:
+  person_month_table: "person_month_state_dpp4_to_glp1"
+  cohort_waterfall_table: "cohort_waterfall_dpp4_to_glp1"
+  run_manifest_table: "run_manifest_dpp4_to_glp1"
+  qc_report_dir: "qc_reports"

@@ -3,8 +3,23 @@
 # Generated outputs and local DuckDB files
 duckdb/
 outputs/
+logs/
+data/
+raw/
+derived/
+scratch/
 *.duckdb
 *.duckdb.wal
+*.parquet
+*.snappy.parquet
+*.sas7bdat
+*.xpt
+
+# Local metadata/config files that may contain restricted HPC paths
+local_config.yaml
+config/local_config.yaml
+config/*local*.yaml
+codex_pack_dpp4_glp1/local_config.yaml
 
 # R session/local project files
 .Rhistory
