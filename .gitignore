@@ -1,0 +1,12 @@
+.venv-jlab/
+
+# Generated outputs and local DuckDB files
+duckdb/
+outputs/
+*.duckdb
+*.duckdb.wal
+
+# R session/local project files
+.Rhistory
+.RData
+.Rproj.user/
