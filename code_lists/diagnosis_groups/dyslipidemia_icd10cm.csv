@@ -1,0 +1,2 @@
+concept_id,concept_label,coding_system,code,display_code,match_type,code_description,default_claim_rule,source,source_url,notes
+dyslipidemia,Dyslipidemia / hyperlipidemia,ICD10CM,E78,E78,prefix,Disorders of lipoprotein metabolism and other lipidemias,Baseline comorbidity.,CMS Chronic Conditions Data Warehouse algorithms,https://www2.ccwdata.org/web/guest/condition-categories,Seed public code list. Normalize claim diagnosis codes by removing decimals and uppercasing before matching.

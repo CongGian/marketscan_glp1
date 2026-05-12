@@ -1,0 +1,2 @@
+concept_id,concept_label,coding_system,code,display_code,match_type,code_description,default_claim_rule,source,source_url,notes
+type2_diabetes,Type 2 diabetes mellitus,ICD10CM,E11,E11,prefix,Type 2 diabetes mellitus,Often used as at least 1 inpatient or 2 outpatient claims in baseline; study-specific.,CMS Chronic Conditions Data Warehouse algorithms,https://www2.ccwdata.org/web/guest/condition-categories,Seed public code list. Normalize claim diagnosis codes by removing decimals and uppercasing before matching.

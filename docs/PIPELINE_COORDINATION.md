@@ -7,10 +7,10 @@ inside the approved HPC environment and must not export row-level claims.
 Generated restricted artifacts should live under:
 
 ```text
-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1
+/PATH/TO/RESTRICTED_WORKSPACE
 ```
 
-The repository under `/N/project/SCIPE/tgian` should remain code, public code
+The repository under `/PATH/TO/REPO` should remain code, public code
 lists, documentation, tests, and synthetic fixtures only.
 
 AI assistants should write and test code with synthetic data only. The analyst

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=mscan_stage08_desc
-#SBATCH --output=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/dpp4_to_glp1/%x_%j.out
-#SBATCH --error=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/dpp4_to_glp1/%x_%j.err
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
 #SBATCH --time=01:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
@@ -14,8 +14,8 @@ set -euo pipefail
 # This job reads the final restricted Stage 07 person-month parquet and writes
 # aggregate figure-ready CSVs plus optional aggregate-only figures.
 
-PROJECT_ROOT="${PROJECT_ROOT:-/N/project/SCIPE/tgian}"
-RESTRICTED_ROOT="${RESTRICTED_ROOT:-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1}"
+PROJECT_ROOT="${PROJECT_ROOT:-${SLURM_SUBMIT_DIR:-$(pwd)}}"
+RESTRICTED_ROOT="${RESTRICTED_ROOT:-/PATH/TO/RESTRICTED_WORKSPACE}"
 CONFIG="${CONFIG:-${PROJECT_ROOT}/config/config_template.yaml}"
 THREADS="${SLURM_CPUS_PER_TASK:-4}"
 MEMORY_LIMIT="${MEMORY_LIMIT:-32GB}"

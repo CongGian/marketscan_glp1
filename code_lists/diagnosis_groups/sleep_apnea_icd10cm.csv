@@ -1,0 +1,2 @@
+concept_id,concept_label,coding_system,code,display_code,match_type,code_description,default_claim_rule,source,source_url,notes
+sleep_apnea,Sleep apnea,ICD10CM,G473,G473,prefix,Sleep apnea,Baseline comorbidity.,CDC/NCHS ICD-10-CM diagnosis coding system,https://www.cdc.gov/nchs/icd/icd-10-cm/index.html,Seed public code list. Normalize claim diagnosis codes by removing decimals and uppercasing before matching.

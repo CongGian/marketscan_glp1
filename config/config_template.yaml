@@ -1,0 +1,331 @@
+# MarketScan DPP-4 to GLP-1 pipeline configuration template.
+# Metadata-only: do not add row-level claims, patient IDs, dates, costs, or samples.
+
+project:
+  name: dpp4_to_glp1_switchers
+  version: "0.1.0"
+  environment: "IU Quartz/RED"
+  metadata_manifest: "/PATH/TO/RESTRICTED_WORKSPACE/metadata/marketscan_metadata_manifest_all_years.json"
+
+paths:
+  restricted_root: "/PATH/TO/RESTRICTED_WORKSPACE"
+  raw_root: "/PATH/TO/RESTRICTED_MARKETSCAN_PARQUET"
+  code_list_root: "/PATH/TO/REPO/code_lists"
+  input_root: "/PATH/TO/RESTRICTED_WORKSPACE/inputs"
+  derived_root: "/PATH/TO/RESTRICTED_WORKSPACE/derived"
+  output_root: "/PATH/TO/RESTRICTED_WORKSPACE/outputs/dpp4_to_glp1"
+  log_root: "/PATH/TO/RESTRICTED_WORKSPACE/logs/dpp4_to_glp1"
+  duckdb_root: "/PATH/TO/RESTRICTED_WORKSPACE/duckdb"
+  tmp_root: "/PATH/TO/RESTRICTED_WORKSPACE/tmp"
+
+study_period:
+  data_years: [2017, 2018, 2019, 2020, 2021, 2022, 2023]
+  index_start: "2018-01-01"
+  index_end: "2022-12-31"
+  baseline_months: 12
+  followup_months: 12
+  event_month_min: -12
+  event_month_max: 12
+
+modules:
+  A:
+    label: "annual_enrollment_summary"
+    pattern: "mscan_{year}_a.parquet"
+  D:
+    label: "outpatient_pharmaceutical_claims"
+    pattern: "mscan_{year}_d.parquet"
+  F:
+    label: "facility_header"
+    pattern: "mscan_{year}_f.parquet"
+  I:
+    label: "inpatient_admissions"
+    pattern: "mscan_{year}_i.parquet"
+  O:
+    label: "outpatient_services"
+    pattern: "mscan_{year}_o.parquet"
+  S:
+    label: "inpatient_services"
+    pattern: "mscan_{year}_s.parquet"
+  T:
+    label: "enrollment_detail"
+    pattern: "mscan_{year}_t.parquet"
+
+module_aliases:
+  annual_enrollment_A: "A"
+  pharmacy_D: "D"
+  facility_header_F: "F"
+  inpatient_I: "I"
+  outpatient_O: "O"
+  inpatient_services_S: "S"
+  enrollment_detail_T: "T"
+
+variables:
+  common:
+    enrollee_id: "ENROLID"
+    year: "YEAR"
+    sequence_number: "SEQNUM"
+    version: "VERSION"
+    family_id: "EFAMID"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+    health_plan: "HLTHPLAN"
+    plan_type: "PLANTYP"
+    medical_coverage: "MHSACOVG"
+    rx_benefit: "RX"
+    data_type: "DATATYP"
+    employee_relation: "EMPREL"
+
+  A:
+    enrollee_id: "ENROLID"
+    year: "YEAR"
+    member_days: "MEMDAYS"
+    age: "AGE"
+    date_of_birth_year: "DOBYR"
+    age_group: "AGEGRP"
+    sex: "SEX"
+    region: "REGION"
+    health_plan: "HLTHPLAN"
+    rx_benefit: "RX"
+    enrolled_month_count: "ENRMON"
+    monthly_data_type_fields: ["DATTYP1", "DATTYP2", "DATTYP3", "DATTYP4", "DATTYP5", "DATTYP6", "DATTYP7", "DATTYP8", "DATTYP9", "DATTYP10", "DATTYP11", "DATTYP12"]
+    monthly_enrollment_fields: ["ENRIND1", "ENRIND2", "ENRIND3", "ENRIND4", "ENRIND5", "ENRIND6", "ENRIND7", "ENRIND8", "ENRIND9", "ENRIND10", "ENRIND11", "ENRIND12"]
+    monthly_member_day_fields: ["MEMDAY1", "MEMDAY2", "MEMDAY3", "MEMDAY4", "MEMDAY5", "MEMDAY6", "MEMDAY7", "MEMDAY8", "MEMDAY9", "MEMDAY10", "MEMDAY11", "MEMDAY12"]
+    monthly_plan_type_fields: ["PLNTYP1", "PLNTYP2", "PLNTYP3", "PLNTYP4", "PLNTYP5", "PLNTYP6", "PLNTYP7", "PLNTYP8", "PLNTYP9", "PLNTYP10", "PLNTYP11", "PLNTYP12"]
+
+  T:
+    enrollee_id: "ENROLID"
+    enrollment_start: "DTSTART"
+    enrollment_end: "DTEND"
+    member_days: "MEMDAYS"
+    medical_coverage: "MHSACOVG"
+    plan_type: "PLANTYP"
+    year: "YEAR"
+    age: "AGE"
+    date_of_birth_year: "DOBYR"
+    region: "REGION"
+    sex: "SEX"
+    health_plan: "HLTHPLAN"
+    rx_benefit: "RX"
+
+  D:
+    enrollee_id: "ENROLID"
+    fill_date: "SVCDATE"
+    ndc: "NDCNUM"
+    days_supply: "DAYSUPP"
+    quantity: "QTY"
+    metric_quantity: "METQTY"
+    allowed_amount: "PAY"
+    plan_paid: "NETPAY"
+    copay: "COPAY"
+    coinsurance: "COINS"
+    deductible: "DEDUCT"
+    awp: "AWP"
+    dispensing_fee: "DISPFEE"
+    ingredient_cost: "INGCOST"
+    generic_id: "GENERID"
+    therapeutic_class: "THERCLS"
+    therapeutic_group: "THERGRP"
+    refill: "REFILL"
+    pharmacy_id: "PHARMID"
+    plan_type: "PLANTYP"
+    health_plan: "HLTHPLAN"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+
+  F:
+    enrollee_id: "ENROLID"
+    facility_header_id: "FACHDID"
+    case_id: "CASEID"
+    claim_id: "MSCLMID"
+    service_start: "SVCDATE"
+    service_end: "TSVCDAT"
+    paid_date: "PDDATE"
+    diagnosis_version: "DXVER"
+    dx_fields: ["DX1", "DX2", "DX3", "DX4", "DX5", "DX6", "DX7", "DX8", "DX9"]
+    present_on_admission_fields: ["POADX1", "POADX2", "POADX3", "POADX4", "POADX5", "POADX6", "POADX7", "POADX8", "POADX9"]
+    proc_fields: ["PROC1", "PROC2", "PROC3", "PROC4", "PROC5", "PROC6"]
+    bill_type: "BILLTYP"
+    place_of_service: "STDPLAC"
+    provider_type: "STDPROV"
+    plan_paid: "NETPAY"
+    copay: "COPAY"
+    coinsurance: "COINS"
+    deductible: "DEDUCT"
+    plan_type: "PLANTYP"
+    health_plan: "HLTHPLAN"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+
+  I:
+    enrollee_id: "ENROLID"
+    case_id: "CASEID"
+    admission_date: "ADMDATE"
+    discharge_date: "DISDATE"
+    length_of_stay: "DAYS"
+    diagnosis_version: "DXVER"
+    principal_diagnosis: "PDX"
+    dx_fields: ["PDX", "DX1", "DX2", "DX3", "DX4", "DX5", "DX6", "DX7", "DX8", "DX9", "DX10", "DX11", "DX12", "DX13", "DX14", "DX15"]
+    principal_procedure: "PPROC"
+    proc_fields: ["PPROC", "PROC1", "PROC2", "PROC3", "PROC4", "PROC5", "PROC6", "PROC7", "PROC8", "PROC9", "PROC10", "PROC11", "PROC12", "PROC13", "PROC14", "PROC15"]
+    drg: "DRG"
+    admit_type: "ADMTYP"
+    discharge_status: "DSTATUS"
+    allowed_amount: "TOTPAY"
+    inpatient_facility_paid: "HOSPPAY"
+    inpatient_professional_paid: "PHYSPAY"
+    plan_paid: "TOTNET"
+    facility_net_paid: "HOSPNET"
+    professional_net_paid: "PHYSNET"
+    copay: "TOTCOPAY"
+    coinsurance: "TOTCOINS"
+    deductible: "TOTDED"
+    plan_type: "PLANTYP"
+    health_plan: "HLTHPLAN"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+
+  S:
+    enrollee_id: "ENROLID"
+    case_id: "CASEID"
+    facility_header_id: "FACHDID"
+    claim_id: "MSCLMID"
+    admission_date: "ADMDATE"
+    discharge_date: "DISDATE"
+    service_start: "SVCDATE"
+    service_end: "TSVCDAT"
+    paid_date: "PDDATE"
+    diagnosis_version: "DXVER"
+    principal_diagnosis: "PDX"
+    dx_fields: ["PDX", "DX1", "DX2", "DX3", "DX4"]
+    principal_procedure: "PPROC"
+    proc_fields: ["PPROC", "PROC1"]
+    procedure_type: "PROCTYP"
+    procedure_modifier: "PROCMOD"
+    revenue_code: "REVCODE"
+    service_category: "SVCSCAT"
+    facility_professional_flag: "FACPROF"
+    place_of_service: "STDPLAC"
+    provider_type: "STDPROV"
+    quantity: "QTY"
+    units: "UNITS"
+    allowed_amount: "PAY"
+    plan_paid: "NETPAY"
+    copay: "COPAY"
+    coinsurance: "COINS"
+    deductible: "DEDUCT"
+    plan_type: "PLANTYP"
+    health_plan: "HLTHPLAN"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+
+  O:
+    enrollee_id: "ENROLID"
+    facility_header_id: "FACHDID"
+    claim_id: "MSCLMID"
+    service_start: "SVCDATE"
+    service_end: "TSVCDAT"
+    paid_date: "PDDATE"
+    diagnosis_version: "DXVER"
+    dx_fields: ["DX1", "DX2", "DX3", "DX4"]
+    proc_fields: ["PROC1"]
+    procedure_group: "PROCGRP"
+    procedure_type: "PROCTYP"
+    procedure_modifier: "PROCMOD"
+    revenue_code: "REVCODE"
+    service_category: "SVCSCAT"
+    facility_professional_flag: "FACPROF"
+    place_of_service: "STDPLAC"
+    provider_type: "STDPROV"
+    quantity: "QTY"
+    units: "UNITS"
+    allowed_amount: "PAY"
+    plan_paid: "NETPAY"
+    copay: "COPAY"
+    coinsurance: "COINS"
+    deductible: "DEDUCT"
+    plan_type: "PLANTYP"
+    health_plan: "HLTHPLAN"
+    age: "AGE"
+    sex: "SEX"
+    region: "REGION"
+
+code_lists:
+  drug_ndc:
+    glp1: "drug_ndc/glp1_ndc.csv"
+    tirzepatide: "drug_ndc/tirzepatide_ndc.csv"
+    glp1_like: "drug_ndc/glp1_like_ndc.csv"
+    dpp4: "drug_ndc/dpp4_ndc.csv"
+    metformin: "drug_ndc/metformin_ndc.csv"
+    insulin: "drug_ndc/insulin_ndc.csv"
+    sglt2: "drug_ndc/sglt2_ndc.csv"
+    sulfonylurea: "drug_ndc/sulfonylurea_ndc.csv"
+    tzd: "drug_ndc/tzd_ndc.csv"
+    other_diabetes: "drug_ndc/other_diabetes_ndc.csv"
+    all_diabetes: "drug_ndc/all_diabetes_drug_ndc.csv"
+  diagnosis_groups:
+    acute_cvd_event: "diagnosis_groups/acute_cvd_event_icd10cm.csv"
+    acute_kidney_event: "diagnosis_groups/acute_kidney_event_icd10cm.csv"
+    cardiovascular_or_ascvd: "diagnosis_groups/cardiovascular_or_ascvd_icd10cm.csv"
+    chronic_kidney_disease: "diagnosis_groups/chronic_kidney_disease_icd10cm.csv"
+    depression_anxiety: "diagnosis_groups/depression_anxiety_icd10cm.csv"
+    diabetes_any: "diagnosis_groups/diabetes_any_icd10cm.csv"
+    diabetic_complications: "diagnosis_groups/diabetic_complications_icd10cm.csv"
+    dka: "diagnosis_groups/dka_icd10cm.csv"
+    dyslipidemia: "diagnosis_groups/dyslipidemia_icd10cm.csv"
+    gallbladder_disease: "diagnosis_groups/gallbladder_disease_icd10cm.csv"
+    gi_adverse_event_proxy: "diagnosis_groups/gi_adverse_event_proxy_icd10cm.csv"
+    heart_failure: "diagnosis_groups/heart_failure_icd10cm.csv"
+    hyperglycemia: "diagnosis_groups/hyperglycemia_icd10cm.csv"
+    hypertension: "diagnosis_groups/hypertension_icd10cm.csv"
+    hypoglycemia: "diagnosis_groups/hypoglycemia_icd10cm.csv"
+    liver_disease: "diagnosis_groups/liver_disease_icd10cm.csv"
+    obesity: "diagnosis_groups/obesity_icd10cm.csv"
+    pancreatitis: "diagnosis_groups/pancreatitis_icd10cm.csv"
+    sleep_apnea: "diagnosis_groups/sleep_apnea_icd10cm.csv"
+    substance_use: "diagnosis_groups/substance_use_icd10cm.csv"
+    type2_diabetes: "diagnosis_groups/type2_diabetes_icd10cm.csv"
+    all_clinical_conditions: "diagnosis_groups/clinical_conditions_icd10cm.csv"
+
+coding_conventions:
+  ndc_source_field: "NDCNUM"
+  ndc_normalized_width: 11
+  ndc_preserve_leading_zeroes: true
+  diagnosis_system_primary: "ICD-10-CM"
+  diagnosis_decimal_free: true
+  procedure_decimal_free: true
+  date_encoding: "MarketScan converted parquet date fields; confirm SAS-day conversion before real-data execution."
+
+exposure_definition:
+  dpp4_preindex_lookback_days: 180
+  dpp4_preindex_grace_days: 60
+  glp1_washout_days: 365
+  replacement_assessment_days: 120
+  dpp4_postindex_grace_days: 30
+  allow_transition_overlap_days: 30
+  include_tirzepatide_in_primary_glp1_like: true
+
+sample_restrictions:
+  min_age: 18
+  max_age: 64
+  require_continuous_medical_enrollment: true
+  require_continuous_rx_enrollment: true
+  require_complete_12m_baseline: true
+  require_complete_12m_followup: true
+  exclude_prior_glp1_baseline: true
+  require_dpp4_preindex_use: true
+
+outcomes_and_mediators:
+  patient_oop_components: ["COPAY", "COINS", "DEDUCT"]
+  spending_fields: ["PAY", "NETPAY", "COPAY", "COINS", "DEDUCT"]
+  monthly_drug_classes: ["glp1", "tirzepatide", "glp1_like", "dpp4", "metformin", "insulin", "sglt2", "sulfonylurea", "tzd", "other_diabetes"]
+  baseline_conditions: ["type2_diabetes", "diabetes_any", "diabetic_complications", "obesity", "chronic_kidney_disease", "cardiovascular_or_ascvd", "heart_failure", "hypertension", "dyslipidemia", "sleep_apnea", "liver_disease", "depression_anxiety", "substance_use", "pancreatitis", "gallbladder_disease"]
+
+outputs:
+  person_month_table: "person_month_dpp4_to_glp1_switchers.parquet"
+  cohort_waterfall_table: "cohort_waterfall_dpp4_to_glp1.csv"
+  run_manifest: "run_manifest_dpp4_to_glp1.json"

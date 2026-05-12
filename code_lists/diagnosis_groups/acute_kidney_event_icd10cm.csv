@@ -1,0 +1,2 @@
+concept_id,concept_label,coding_system,code,display_code,match_type,code_description,default_claim_rule,source,source_url,notes
+acute_kidney_event,Acute kidney event,ICD10CM,N17,N17,prefix,Acute kidney failure,Monthly outcome proxy; refine for inpatient-only sensitivity.,CDC/NCHS ICD-10-CM diagnosis coding system,https://www.cdc.gov/nchs/icd/icd-10-cm/index.html,Seed public code list. Normalize claim diagnosis codes by removing decimals and uppercasing before matching.

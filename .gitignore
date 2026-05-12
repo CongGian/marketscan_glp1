@@ -4,16 +4,34 @@
 duckdb/
 outputs/
 logs/
+metadata/
 data/
 raw/
 derived/
 scratch/
+tmp/
 *.duckdb
 *.duckdb.wal
 *.parquet
 *.snappy.parquet
 *.sas7bdat
 *.xpt
+*.rds
+*.RDS
+
+# Restricted, licensed, or generated study documents
+docs/*.pdf
+*.docx
+*.xlsx
+*.pptx
+*.html
+manuscripts/dpp4_glp1_short_paper.Rmd
+manuscripts/overleaf/dpp4_glp1_short_paper_overleaf.tex
+*.log
+*.out
+*.err
+*.pre_full_cost_backup.*
+.~lock.*#
 
 # Local metadata/config files that may contain restricted HPC paths
 local_config.yaml

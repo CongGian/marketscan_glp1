@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=mscan_metadata
-#SBATCH --output=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/metadata/%x_%j.out
-#SBATCH --error=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/metadata/%x_%j.err
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
 #SBATCH --time=00:30:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=8G
@@ -18,8 +18,8 @@ set -euo pipefail
 # This job reads Parquet footers/schema metadata only. It does not scan
 # MarketScan rows or export patient-level data.
 
-PROJECT_ROOT="${PROJECT_ROOT:-/N/project/SCIPE/tgian}"
-RESTRICTED_ROOT="${RESTRICTED_ROOT:-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1}"
+PROJECT_ROOT="${PROJECT_ROOT:-${SLURM_SUBMIT_DIR:-$(pwd)}}"
+RESTRICTED_ROOT="${RESTRICTED_ROOT:-/PATH/TO/RESTRICTED_WORKSPACE}"
 cd "${PROJECT_ROOT}"
 
 mkdir -p "${RESTRICTED_ROOT}/logs/metadata" "${RESTRICTED_ROOT}/metadata"
@@ -28,7 +28,7 @@ echo "[$(date)] Starting MarketScan metadata manifest on ${HOSTNAME}"
 echo "PROJECT_ROOT=${PROJECT_ROOT}"
 echo "RESTRICTED_ROOT=${RESTRICTED_ROOT}"
 echo "YEARS=${YEARS:-2016 2017 2018 2019 2020 2021 2022 2023 2024}"
-echo "RAW_ROOT=${RAW_ROOT:-/N/project/Marketscan1/parquet}"
+echo "RAW_ROOT=${RAW_ROOT:-/PATH/TO/RESTRICTED_MARKETSCAN_PARQUET}"
 echo "OUTPUT=${OUTPUT:-${RESTRICTED_ROOT}/metadata/marketscan_metadata_manifest_all_years.json}"
 
 tools/run_marketscan_metadata_all_years.sh

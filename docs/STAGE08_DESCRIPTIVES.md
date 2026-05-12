@@ -15,7 +15,7 @@ costs into prompts or external tools.
 The default output directory is:
 
 ```text
-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/outputs/dpp4_to_glp1/figures/data
+/PATH/TO/RESTRICTED_WORKSPACE/outputs/dpp4_to_glp1/figures/data
 ```
 
 ## Run
@@ -23,14 +23,14 @@ The default output directory is:
 After Stage 07 completes:
 
 ```bash
-cd /N/project/SCIPE/tgian
+cd /PATH/TO/REPO
 sbatch slurm/run_stage_08_descriptives.sbatch
 ```
 
 To write only aggregate CSVs and skip figure rendering:
 
 ```bash
-cd /N/project/SCIPE/tgian
+cd /PATH/TO/REPO
 MAKE_FIGURES=false sbatch slurm/run_stage_08_descriptives.sbatch
 ```
 

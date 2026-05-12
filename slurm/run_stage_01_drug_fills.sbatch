@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=mscan_stage01_drugs
-#SBATCH --output=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/dpp4_to_glp1/%x_%A_%a.out
-#SBATCH --error=/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/logs/dpp4_to_glp1/%x_%A_%a.err
+#SBATCH --output=%x_%A_%a.out
+#SBATCH --error=%x_%A_%a.err
 #SBATCH --time=04:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
@@ -20,8 +20,8 @@ set -euo pipefail
 # This job scans row-level MarketScan pharmacy claims and writes a restricted
 # derived parquet. Run it only inside an approved MarketScan workspace.
 
-PROJECT_ROOT="${PROJECT_ROOT:-/N/project/SCIPE/tgian}"
-RESTRICTED_ROOT="${RESTRICTED_ROOT:-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1}"
+PROJECT_ROOT="${PROJECT_ROOT:-${SLURM_SUBMIT_DIR:-$(pwd)}}"
+RESTRICTED_ROOT="${RESTRICTED_ROOT:-/PATH/TO/RESTRICTED_WORKSPACE}"
 CONFIG="${CONFIG:-${PROJECT_ROOT}/config/config_template.yaml}"
 OUT_DIR="${OUT_DIR:-${RESTRICTED_ROOT}/derived/drug_fills}"
 THREADS="${SLURM_CPUS_PER_TASK:-4}"
