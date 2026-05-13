@@ -20,6 +20,7 @@ tmp/
 *.RDS
 
 # Restricted, licensed, or generated study documents
+01_build_glp1_pool.R
 docs/*.pdf
 *.docx
 *.xlsx

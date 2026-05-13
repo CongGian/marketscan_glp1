@@ -1,24 +1,13 @@
-# Manuscript Rendering
+# Manuscript Drafting
 
-The short DPP-4 to GLP-1-like switcher paper is generated from aggregate Stage
-08 CSVs only.
+This folder is for manuscript templates and source files that are safe to share.
+Do not commit rendered manuscripts or empirical tables/figures based on
+restricted MarketScan outputs unless they have been cleared for release.
 
-Preferred DOCX render on Quartz:
+Manuscript drafting on a laptop should use placeholders, synthetic examples, or
+approved aggregate values only. Restricted outputs should remain inside the
+approved HPC workspace.
 
-```bash
-cd /N/project/SCIPE/tgian
-module load pandoc/3.1.10
-Rscript scripts/render_short_paper.R --format docx
-```
-
-The default output is:
-
-```text
-/N/project/mscan_trial/trial_users/tgian/marketscan_glp1/outputs/dpp4_to_glp1/manuscript/dpp4_glp1_short_paper.docx
-```
-
-PDF rendering requires a LaTeX-capable environment. If LaTeX is not available on
-the cluster, render DOCX first and convert it to PDF in an approved local
-environment.
-
-The source file is `manuscripts/dpp4_glp1_short_paper.Rmd`.
+If a manuscript render is needed on HPC, run it manually after setting local
+paths through environment variables or an untracked config file. Do not run AI
+agents in the restricted HPC environment.
